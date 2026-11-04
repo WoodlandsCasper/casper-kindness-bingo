@@ -122,7 +122,9 @@ function render(){
 }
 document.getElementById('player').addEventListener('input',save);
 document.getElementById('reset').addEventListener('click',()=>{
- if(confirm('Clear your checkmarks and start a new card?')){checked=[12];save();render();}
+  checked=[12];
+  save();
+  render();
 });
 document.getElementById('share').addEventListener('click',async()=>{
  const name=document.getElementById('player').value.trim();
