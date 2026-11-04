@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Casper Acts of Kindness Bingo</title>
+<style>
+:root{--navy:#183b62;--blue:#8fb9d8;--pale:#eaf3f8;--cream:#fffdf8;--orange:#d98b4a;--ink:#243447}
+*{box-sizing:border-box}
+body{margin:0;background:#f5f2eb;color:var(--ink);font-family:Arial,Helvetica,sans-serif;padding:24px}
+.wrap{max-width:1000px;margin:auto;background:var(--cream);border:3px solid var(--navy);border-radius:18px;overflow:hidden;box-shadow:0 8px 24px #1c36501c}
+header{padding:24px 28px 18px;text-align:center;background:repeating-linear-gradient(90deg,#fff 0 18px,#dcebf5 18px 36px);border-bottom:3px solid var(--navy)}
+.brand{font-size:15px;font-weight:800;letter-spacing:5px;color:var(--navy)}
+h1{font-family:Georgia,serif;font-size:clamp(30px,5vw,48px);line-height:1.05;margin:8px 0 4px;color:var(--navy)}
+.sub{font-size:13px;letter-spacing:2px;font-weight:700;color:#536b7e}
+.decor{font-size:29px;letter-spacing:9px;margin-top:10px}
+.intro{padding:16px 22px 8px;text-align:center;font-size:14px;line-height:1.5}
+.name-row{display:flex;gap:12px;justify-content:center;align-items:center;flex-wrap:wrap;padding:8px 18px 14px}
+.name-row input{border:1px solid #9aafbf;border-radius:8px;padding:9px 11px;font-size:14px;max-width:240px}
+.stats{display:flex;gap:10px;justify-content:center;align-items:center;flex-wrap:wrap;padding:0 16px 16px}
+.pill{background:var(--pale);border:1px solid #c5d9e8;border-radius:30px;padding:8px 14px;font-weight:700;font-size:13px;color:var(--navy)}
+.grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px;padding:0 18px 18px}
+.tile{min-height:132px;border:1.5px solid var(--navy);border-radius:9px;background:white;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:12px 9px;cursor:pointer;position:relative;transition:background .15s,border-color .15s}
+.tile:hover{background:#f5faff}
+.tile .mark{font-size:22px;color:#4e815f;min-height:25px}
+.tile .words{font-size:clamp(11px,1.4vw,14px);line-height:1.28;font-weight:600}
+.tile.done{background:#eaf4ec;border:2px solid #568765}
+.tile.done .words{text-decoration:line-through;text-decoration-thickness:1px}
+.tile.free{background:#f8eddc;border:2px solid var(--orange)}
+.tile.free .mark{color:var(--orange)}
+footer{background:var(--navy);color:white;text-align:center;padding:16px;font-family:Georgia,serif;font-size:20px}
+.actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;padding:0 18px 18px}
+button{border:0;border-radius:8px;background:var(--navy);color:white;padding:10px 16px;font-weight:700;cursor:pointer}
+button.secondary{background:white;color:var(--navy);border:1px solid var(--navy)}
+.note{text-align:center;font-size:12px;color:#5e6e7a;padding:0 20px 16px}
+@media(max-width:620px){body{padding:8px}.grid{gap:4px;padding:0 8px 12px}.tile{min-height:110px;padding:7px 4px}.tile .words{font-size:10px}.tile .mark{font-size:18px}.intro{padding:12px 10px}.name-row{padding-bottom:10px}header{padding:18px 10px 12px}.decor{font-size:22px}}
+@media print{body{padding:0;background:white}.wrap{box-shadow:none;border-radius:0}.actions,.note,.name-row input{display:none}.tile{break-inside:avoid;min-height:112px}.grid{gap:5px}.tile.done{background:#eaf4ec!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="brand">CASPER</div>
+  <h1>Acts of Kindness BINGO</h1>
+  <div class="sub">KINDER PEOPLE · STRONGER TEAMS · BRIGHTER COMMUNITIES</div>
+  <div class="decor" aria-hidden="true">🍂　🐻　💙　🦊　🍁</div>
+</header>
+<div class="intro">Small acts can make a big difference. Play individually or as a team, and share your kindness moments on Slack throughout November!</div>
+<div class="name-row"><label for="player"><strong>Playing as:</strong></label><input id="player" placeholder="Your name or team"></div>
+<div class="stats">
+  <span class="pill" id="progress">0 of 25 completed</span>
+  <span class="pill" id="bingo">BINGO lines: 0</span>
+</div>
+<div class="grid" id="board"></div>
+<div class="actions">
+  <button id="share">Copy a Slack update</button>
+  <button class="secondary" onclick="window.print()">Print card</button>
+  <button class="secondary" id="reset">Reset card</button>
+</div>
+<div class="note">Your checkmarks are saved in this browser on this device. Share a quick note or photo in Slack to inspire someone else!</div>
+<footer>Small Acts ♥ Big Impact</footer>
+</div>
+<script>
+const prompts = [
+"Send a kind message to someone just because.",
+"Post a Cozy Kudo on Slack for a teammate on Friday.",
+"Share a helpful tip, resource or article that could benefit someone on your team.",
+"Reach out to someone you don’t know well and introduce yourself.",
+"Tell a teammate how they’ve helped or inspired you.",
+"Bring a snack, treat or coffee to share with your team.",
+"Share a recipe (or favorite fall drink) with the team.",
+"Offer to help a teammate with a project or task.",
+"Give a genuine compliment to a coworker (in person or on Slack).",
+"Take a few minutes to check in on someone and really listen.",
+"Do a small act of kindness in your community (e.g., help a neighbor, hold a door, pay it forward).",
+"Share something that made you smile today (a photo, quote or moment).",
+"FREE SPACE",
+"Send a thank-you note to someone who goes above and beyond.",
+"Take a break, step outside and appreciate something beautiful in your day.",
+"Support a local business or community organization.",
+"Celebrate a team win (big or small).",
+"Share a book, podcast or show recommendation with the team.",
+"Ask someone how they’re doing and really mean it.",
+"Give encouragement to someone who is facing a challenge or busy season.",
+"Share a positive quote or word of encouragement on Slack.",
+"Practice gratitude — write down 3 things you’re thankful for today.",
+"Do something kind for the environment (recycle, pick up litter, use a reusable mug, plant something).",
+"Make someone smile (a funny meme, a kind note, or a thoughtful surprise).",
+"Spread kindness beyond work today — to a friend, family member or stranger."
+];
+const board=document.getElementById('board');
+const storageKey='casper-kindness-bingo-november-v1';
+let saved={};
+try{saved=JSON.parse(localStorage.getItem(storageKey)||'{}')}catch(e){saved={}}
+let checked=Array.isArray(saved.checked)?saved.checked:[12];
+document.getElementById('player').value=saved.player||'';
+function save(){localStorage.setItem(storageKey,JSON.stringify({checked,player:document.getElementById('player').value}));}
+function lines(){
+ let count=0;
+ for(let r=0;r<5;r++) if(Array.from({length:5},(_,c)=>r*5+c).every(i=>checked.includes(i)))count++;
+ for(let c=0;c<5;c++) if(Array.from({length:5},(_,r)=>r*5+c).every(i=>checked.includes(i)))count++;
+ if([0,6,12,18,24].every(i=>checked.includes(i)))count++;
+ if([4,8,12,16,20].every(i=>checked.includes(i)))count++;
+ return count;
+}
+function render(){
+ board.innerHTML='';
+ prompts.forEach((p,i)=>{
+  const b=document.createElement('button');
+  b.type='button';b.className='tile'+(checked.includes(i)?' done':'')+(i===12?' free':'');
+  b.setAttribute('aria-pressed',checked.includes(i)?'true':'false');
+  b.innerHTML='<span class="mark">'+(checked.includes(i)?'✓':(i===12?'♥':'♡'))+'</span><span class="words"></span>';
+  b.querySelector('.words').textContent=p;
+  b.addEventListener('click',()=>{
+   checked=checked.includes(i)?checked.filter(x=>x!==i):[...checked,i];
+   save();render();
+  });
+  board.appendChild(b);
+ });
+ document.getElementById('progress').textContent=checked.length+' of 25 completed';
+ document.getElementById('bingo').textContent='BINGO lines: '+lines();
+}
+document.getElementById('player').addEventListener('input',save);
+document.getElementById('reset').addEventListener('click',()=>{
+ if(confirm('Clear your checkmarks and start a new card?')){checked=[12];save();render();}
+});
+document.getElementById('share').addEventListener('click',async()=>{
+ const name=document.getElementById('player').value.trim();
+ const completed=checked.filter(i=>i!==12).length;
+ const msg=(name?name+' has':'I have')+' completed '+completed+' acts of kindness on the Casper Acts of Kindness BINGO card! 💙🍂 Small acts, big impact. #KindnessIsContagious';
+ try{await navigator.clipboard.writeText(msg);document.getElementById('share').textContent='Copied! Paste into Slack';}
+ catch(e){prompt('Copy this update into Slack:',msg);}
+});
+render();
+</script>
+</body>
+</html>
